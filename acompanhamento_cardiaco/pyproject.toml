@@ -7,17 +7,15 @@ readme = "README.md"
 requires-python = ">=3.13,<4.0"
 
 dependencies = [
-    "fastapi[standard] (>=0.136.1,<0.137.0)"
+    "fastapi[standard] (>=0.136.1,<0.137.0)",
+    "sqlalchemy (>=2.0.49,<3.0.0)",
+    "passlib (>=1.7.4,<2.0.0)"
 ]
-
-
-
 
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
-
 
 
 [dependency-groups]
@@ -29,38 +27,42 @@ dev = [
 ]
 
 
-
 [tool.ruff]
-line-length = 79
+line-length = 83
 extend-exclude = ["migrations"]
-
 
 
 [tool.ruff.lint]
 preview = true
-select = ['I', 'F', 'E', 'W', 'PL', 'PT']
+select = ["I", "F", "E", "W", "PL", "PT"]
 
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**/*.py" = [
+    "PLR2004",
+    "PLR6301",
+]
+
+"acompanhamento_cardiaco/users/user_service.py" = [
+    "PLR6301",
+]
 
 
 [tool.ruff.format]
 preview = true
-quote-style = 'single'
-
+quote-style = "single"
 
 
 [tool.pytest.ini_options]
 pythonpath = "."
-addopts = '-p no:warnings'
-
+addopts = "-p no:warnings"
 
 
 [tool.taskipy.tasks]
-lint = 'ruff check'
-pre_format = 'ruff check --fix'
-format = 'ruff format'
-run = 'fastapi dev fastapi_zero/app.py'
-pre_test = 'task lint'
-test = 'pytest -s -x --cov=fastapi_zero -vv'
-post_test = 'coverage html'
-
-
+lint = "ruff check ."
+pre_format = "ruff check . --fix"
+format = "ruff format ."
+run = "fastapi dev acompanhamento_cardiaco/main.py"
+pre_test = "task lint"
+test = "pytest -s -x --cov=acompanhamento_cardiaco -vv"
+post_test = "coverage html"
