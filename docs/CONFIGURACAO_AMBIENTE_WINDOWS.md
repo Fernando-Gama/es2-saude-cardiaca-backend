@@ -1,6 +1,6 @@
-# Configuração do Ambiente
+# Configuração do Ambiente no Windows
 
-Este documento explica como configurar o ambiente de desenvolvimento do projeto **API de Acompanhamento de Saúde Cardíaca**.
+Este documento explica como configurar o ambiente de desenvolvimento do projeto **API de Acompanhamento de Saúde Cardíaca** no Windows.
 
 A ideia é que qualquer pessoa consiga clonar o repositório, instalar as dependências e executar o projeto localmente.
 
@@ -13,6 +13,7 @@ O projeto utiliza:
 - Ruff
 - Pytest
 - FastAPI
+- VS Code
 
 O `pipx` será usado para instalar o Poetry de forma isolada.
 
@@ -43,78 +44,183 @@ requires-python = ">=3.13,<4.0"
 
 Portanto, o projeto deve ser executado com Python 3.13 ou superior, respeitando o limite definido no `pyproject.toml`.
 
-Neste projeto, a instalação do Python pode ser feita pelo próprio Poetry, desde que a versão instalada tenha suporte ao comando:
+Neste projeto, a instalação do Python usado pela aplicação pode ser feita pelo próprio Poetry, por meio do comando:
 
-```bash
-poetry python install
+```powershell
+poetry python install 3.13
+```
+
+> Observação: para instalar o `pipx` e o `Poetry`, o Windows precisa ter pelo menos uma instalação inicial do Python. Depois disso, o Python usado pelo projeto pode ser instalado pelo próprio Poetry.
+
+---
+
+## 2. Configuração automática pelo arquivo `.bat`
+
+A forma mais simples de configurar o ambiente no Windows é executar o arquivo:
+
+```text
+conf.bat
+```
+
+Esse arquivo deve ficar na raiz do projeto, na mesma pasta do arquivo `pyproject.toml`.
+
+Exemplo da estrutura esperada:
+
+```text
+acompanhamento-cardiaco/
+├── acompanhamento_cardiaco/
+├── tests/
+├── docs/
+├── pyproject.toml
+├── poetry.lock
+└── conf.bat
+```
+
+Para executar o arquivo, entre na pasta do projeto pelo CMD:
+
+```bat
+cd C:\caminho\para\acompanhamento-cardiaco
+```
+
+Depois execute:
+
+```bat
+conf.bat
+```
+
+Também é possível executar com:
+
+```bat
+.\conf.bat
+```
+
+Ou dando dois cliques no arquivo pelo Explorador de Arquivos.
+
+---
+
+## 3. O que o `.bat` faz
+
+O arquivo `conf.bat` automatiza a configuração do ambiente.
+
+Ele executa as seguintes etapas:
+
+1. Verifica se o Git está instalado;
+2. Verifica se existe um Python inicial no Windows;
+3. Instala ou atualiza o `pipx`;
+4. Instala ou atualiza o Poetry;
+5. Verifica se o Poetry está disponível;
+6. Configura o Poetry para criar a `.venv` dentro do projeto;
+7. Instala o Python 3.13 pelo Poetry;
+8. Cria o ambiente virtual;
+9. Instala as dependências do projeto;
+10. Cria a pasta `.vscode/`, se ela ainda não existir;
+11. Cria o arquivo `.vscode/settings.json`, somente se ele ainda não existir.
+
+O `.bat` não sobrescreve o arquivo `.vscode/settings.json` caso ele já exista.
+
+---
+
+## 4. Possível aviso sobre PATH
+
+Durante a execução, pode aparecer uma mensagem dizendo que o `pipx` ou o `Poetry` foram adicionados ao `PATH`, mas que é necessário fechar e abrir o terminal novamente.
+
+Exemplo:
+
+```text
+You will need to open a new terminal or re-login for the PATH changes to take effect.
+```
+
+Caso isso aconteça, feche o CMD ou PowerShell, abra novamente e execute o arquivo outra vez:
+
+```bat
+conf.bat
+```
+
+Isso é normal na primeira configuração do ambiente.
+
+---
+
+## 5. Instalando o Git manualmente
+
+Caso o script não consiga instalar o Git automaticamente, instale pelo site oficial:
+
+```text
+https://git-scm.com/downloads
+```
+
+Após instalar, abra o CMD ou PowerShell e verifique:
+
+```bat
+git --version
 ```
 
 ---
 
-## 2. Instalando o pipx
+## 6. Instalando o pipx manualmente
 
-O `pipx` serve para instalar ferramentas Python de linha de comando em ambientes isolados.
+Caso seja necessário instalar o `pipx` manualmente, execute:
 
-Neste projeto, ele será usado para instalar o Poetry.
-
-No Ubuntu, instale com:
-
-```bash
-sudo apt update
-sudo apt install pipx
+```bat
+py -m pip install --user pipx
 ```
 
-Depois, garanta que o diretório do `pipx` esteja no `PATH`:
+Depois, garanta que o `pipx` esteja no `PATH`:
 
-```bash
-pipx ensurepath
+```bat
+py -m pipx ensurepath
 ```
 
 Feche e abra o terminal novamente.
 
-Para verificar se a instalação funcionou:
+Para verificar se funcionou:
 
-```bash
+```bat
 pipx --version
 ```
 
 ---
 
-## 3. Instalando o Poetry com pipx
+## 7. Instalando o Poetry manualmente
 
 Com o `pipx` instalado, instale o Poetry:
 
-```bash
+```bat
 pipx install poetry
 ```
 
 Verifique se o Poetry foi instalado corretamente:
 
-```bash
+```bat
 poetry --version
 ```
 
-O Poetry é parecido com o Maven no Java, pois permite gerenciar o projeto, suas dependências e seu ambiente de execução.
+Caso precise atualizar o Poetry:
 
-Caso o comando `poetry python install` não esteja disponível, atualize o Poetry:
-
-```bash
+```bat
 pipx upgrade poetry
 ```
 
 ---
 
-## 4. Clonando o projeto
+## 8. Clonando o projeto
+
+Escolha uma pasta para guardar seus projetos.
+
+Exemplo:
+
+```bat
+cd %USERPROFILE%\Documents
+```
 
 Clone o repositório:
 
-```bash
+```bat
 git clone URL_DO_REPOSITORIO
 ```
 
 Entre na pasta do projeto:
 
-```bash
+```bat
 cd acompanhamento-cardiaco
 ```
 
@@ -122,73 +228,91 @@ Caso o nome da pasta seja diferente, entre na pasta correta do repositório clon
 
 ---
 
-## 5. Configurando o ambiente virtual dentro do projeto
+## 9. Configurando o ambiente virtual dentro do projeto
 
 Para facilitar a configuração do VS Code, é recomendado criar o ambiente virtual dentro da pasta do projeto.
 
 Execute:
 
-```bash
+```bat
 poetry config virtualenvs.in-project true --local
 ```
 
 Esse comando faz com que o ambiente virtual seja criado na pasta:
 
-```bash
+```text
 .venv/
+```
+
+No Windows, o Python do ambiente virtual ficará em:
+
+```text
+.venv\Scripts\python.exe
 ```
 
 Essa pasta não deve ser enviada para o Git.
 
 ---
 
-## 6. Instalando o Python 3.13 pelo Poetry
+## 10. Instalando o Python 3.13 pelo Poetry
 
 Este projeto usa Python 3.13 ou superior.
 
 Para instalar o Python 3.13 pelo Poetry, execute:
 
-```bash
+```bat
 poetry python install 3.13
 ```
 
 Depois, verifique as versões de Python disponíveis para o Poetry:
 
-```bash
+```bat
 poetry python list
 ```
 
 Agora configure o projeto para usar o Python 3.13:
 
-```bash
+```bat
 poetry env use 3.13
 ```
 
-Caso o comando acima não encontre o Python, tente usar o executável diretamente:
+Caso o comando acima não encontre o Python, veja o caminho do Python instalado pelo Poetry:
 
-```bash
-poetry env use python3.13
+```bat
+poetry python list
+```
+
+Depois use o caminho completo:
+
+```bat
+poetry env use CAMINHO_DO_PYTHON
 ```
 
 Para verificar o ambiente criado pelo Poetry:
 
-```bash
+```bat
 poetry env info
 ```
 
 Para ver o caminho exato do Python usado no ambiente virtual:
 
-```bash
+```bat
 poetry env info --executable
+```
+
+O caminho esperado será parecido com:
+
+```text
+C:\caminho\do\projeto\acompanhamento-cardiaco\.venv\Scripts\python.exe
 ```
 
 ---
 
-## 7. Instalando as dependências do projeto
+## 11. Instalando as dependências do projeto
 
 Dentro da pasta do projeto, execute:
 
-```bash
+```bat
 poetry install
 ```
 
@@ -217,33 +341,23 @@ dev = [
 
 ---
 
-## 8. Ativando o ambiente virtual do Poetry
+## 12. Ativando o ambiente virtual no CMD
 
-Existem duas formas de executar comandos dentro do ambiente virtual do Poetry.
+Para ativar o ambiente virtual no CMD, entre na raiz do projeto e execute:
 
-### Opção 1: Usar `poetry run`
-
-Essa opção executa um comando dentro do ambiente virtual sem precisar ativá-lo manualmente.
-
-Exemplo:
-
-```bash
-poetry run task run
+```bat
+.venv\Scripts\activate.bat
 ```
 
----
+Se deu certo, o terminal ficará parecido com:
 
-### Opção 2: Ativar o ambiente virtual
-
-Para ativar o ambiente virtual no terminal, use:
-
-```bash
-eval $(poetry env activate)
+```text
+(.venv) C:\caminho\do\projeto\acompanhamento-cardiaco>
 ```
 
-Depois disso, você pode executar os comandos diretamente:
+Depois disso, você pode executar comandos diretamente:
 
-```bash
+```bat
 task run
 task test
 task lint
@@ -251,17 +365,67 @@ task lint
 
 Para sair do ambiente virtual:
 
-```bash
+```bat
 deactivate
 ```
 
 ---
 
-## 9. Executando o projeto
+## 13. Ativando o ambiente virtual no PowerShell
+
+Para ativar o ambiente virtual no PowerShell, execute:
+
+```powershell
+.venv\Scripts\Activate.ps1
+```
+
+Caso apareça um erro parecido com:
+
+```text
+cannot be loaded because running scripts is disabled on this system
+```
+
+Execute:
+
+```powershell
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+```
+
+Depois tente ativar novamente:
+
+```powershell
+.venv\Scripts\Activate.ps1
+```
+
+Para sair do ambiente virtual:
+
+```powershell
+deactivate
+```
+
+---
+
+## 14. Executando comandos sem ativar a `.venv`
+
+Também é possível executar os comandos sem ativar o ambiente virtual.
+
+Para isso, use `poetry run`.
+
+Exemplo:
+
+```bat
+poetry run task run
+```
+
+Essa é uma forma segura de garantir que o comando será executado dentro do ambiente virtual correto.
+
+---
+
+## 15. Executando o projeto
 
 Para rodar a aplicação FastAPI em modo de desenvolvimento:
 
-```bash
+```bat
 poetry run task run
 ```
 
@@ -273,7 +437,7 @@ run = "fastapi dev acompanhamento_cardiaco/main.py"
 
 Ou seja, ele executa internamente:
 
-```bash
+```bat
 fastapi dev acompanhamento_cardiaco/main.py
 ```
 
@@ -285,7 +449,7 @@ http://127.0.0.1:8000/docs
 
 ---
 
-## 10. Comandos disponíveis com Taskipy
+## 16. Comandos disponíveis com Taskipy
 
 O projeto utiliza o Taskipy para criar atalhos de comandos.
 
@@ -308,13 +472,13 @@ post_test = "coverage html"
 
 Executa a aplicação FastAPI em modo de desenvolvimento:
 
-```bash
+```bat
 poetry run task run
 ```
 
 Internamente executa:
 
-```bash
+```bat
 fastapi dev acompanhamento_cardiaco/main.py
 ```
 
@@ -324,13 +488,13 @@ fastapi dev acompanhamento_cardiaco/main.py
 
 Verifica problemas no código usando o Ruff:
 
-```bash
+```bat
 poetry run task lint
 ```
 
 Internamente executa:
 
-```bash
+```bat
 ruff check
 ```
 
@@ -342,7 +506,7 @@ Esse comando aponta problemas de estilo, imports, erros simples e regras configu
 
 Formata o código usando o Ruff:
 
-```bash
+```bat
 poetry run task format
 ```
 
@@ -354,19 +518,19 @@ pre_format = "ruff check --fix"
 
 Ou seja, ao rodar:
 
-```bash
+```bat
 poetry run task format
 ```
 
 O Taskipy executa primeiro:
 
-```bash
+```bat
 ruff check --fix
 ```
 
 Depois executa:
 
-```bash
+```bat
 ruff format
 ```
 
@@ -378,7 +542,7 @@ Na prática, esse comando tenta corrigir problemas automaticamente e depois form
 
 Executa os testes do projeto:
 
-```bash
+```bat
 poetry run task test
 ```
 
@@ -390,13 +554,13 @@ pre_test = "task lint"
 
 Ou seja, antes dos testes, ele roda:
 
-```bash
+```bat
 task lint
 ```
 
 Depois executa:
 
-```bash
+```bat
 pytest -s -x --cov=acompanhamento_cardiaco -vv
 ```
 
@@ -418,80 +582,72 @@ Esse comando gera um relatório HTML de cobertura de testes.
 
 O relatório fica na pasta:
 
-```bash
+```text
 htmlcov/
 ```
 
-Para abrir o relatório, acesse o arquivo:
+Para abrir o relatório no Windows, execute:
 
-```bash
-htmlcov/index.html
+```bat
+start htmlcov\index.html
 ```
 
 ---
 
-## 11. Executando comandos sem Taskipy
+## 17. Executando comandos sem Taskipy
 
 Também é possível executar os comandos diretamente, sem usar o Taskipy.
 
 Rodar o projeto:
 
-```bash
+```bat
 poetry run fastapi dev acompanhamento_cardiaco/main.py
 ```
 
 Rodar o lint:
 
-```bash
+```bat
 poetry run ruff check
 ```
 
 Formatar o código:
 
-```bash
+```bat
 poetry run ruff check --fix
 poetry run ruff format
 ```
 
 Rodar os testes:
 
-```bash
+```bat
 poetry run pytest -s -x --cov=acompanhamento_cardiaco -vv
 ```
 
 Gerar relatório HTML de cobertura:
 
-```bash
+```bat
 poetry run coverage html
+```
+
+Abrir relatório HTML:
+
+```bat
+start htmlcov\index.html
 ```
 
 ---
 
-## 12. Configurando o VS Code
+## 18. Configurando o VS Code
 
-Caso o VS Code não reconheça as bibliotecas instaladas pelo Poetry, descubra o caminho do Python do ambiente virtual:
+O arquivo `conf.bat` cria automaticamente o arquivo `.vscode/settings.json`, caso ele ainda não exista.
 
-```bash
-poetry env info --executable
-```
+Esse arquivo configura o VS Code para usar o Python da `.venv` do projeto.
 
-Depois, no VS Code:
-
-1. Pressione `Ctrl + Shift + P`
-2. Procure por `Python: Select Interpreter`
-3. Escolha o interpretador retornado pelo comando acima
-
-Como o ambiente virtual foi configurado para ficar dentro do projeto, o caminho esperado é:
-
-```bash
-.venv/bin/python
-```
-
-Também é possível criar o arquivo `.vscode/settings.json` para configurar o interpretador automaticamente no VS Code:
+O conteúdo esperado é:
 
 ```json
 {
-  "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python",
+  "python.defaultInterpreterPath": "${workspaceFolder}\\.venv\\Scripts\\python.exe",
   "python.testing.pytestEnabled": true,
   "python.testing.pytestArgs": [
     "tests"
@@ -501,18 +657,71 @@ Também é possível criar o arquivo `.vscode/settings.json` para configurar o i
 }
 ```
 
-A pasta `.vscode/` pode ser versionada quando as configurações forem úteis para todo o grupo.
+Caso o VS Code não reconheça automaticamente o interpretador, descubra o caminho do Python do ambiente virtual:
+
+```bat
+poetry env info --executable
+```
+
+Ou, com a `.venv` ativada:
+
+```bat
+where python
+```
+
+Depois, no VS Code:
+
+1. Pressione `Ctrl + Shift + P`
+2. Procure por `Python: Select Interpreter`
+3. Escolha o interpretador da `.venv`
+
+O caminho esperado é:
+
+```text
+.venv\Scripts\python.exe
+```
 
 ---
 
-## 13. Arquivos que devem ser versionados
+## 19. Como descobrir o caminho da `.venv`
+
+Com o ambiente virtual ativado, execute no CMD:
+
+```bat
+echo %VIRTUAL_ENV%
+```
+
+Esse comando mostra o caminho da pasta da `.venv`.
+
+Exemplo:
+
+```text
+C:\caminho\do\projeto\acompanhamento-cardiaco\.venv
+```
+
+Para descobrir o caminho do Python usado pela `.venv`, execute:
+
+```bat
+where python
+```
+
+O caminho esperado será parecido com:
+
+```text
+C:\caminho\do\projeto\acompanhamento-cardiaco\.venv\Scripts\python.exe
+```
+
+---
+
+## 20. Arquivos que devem ser versionados
 
 Os arquivos abaixo devem ser enviados para o Git:
 
 - `pyproject.toml`
 - `poetry.lock`
 - `README.md`
-- `docs/CONFIGURACAO_AMBIENTE.md`
+- `docs/CONFIGURACAO_AMBIENTE_WINDOWS.md`
+- `conf.bat`
 - `acompanhamento_cardiaco/`
 - `tests/`
 - `.vscode/settings.json`, caso o grupo queira padronizar o VS Code
@@ -523,7 +732,7 @@ Isso ajuda a garantir que outra pessoa consiga instalar o projeto com as mesmas 
 
 ---
 
-## 14. Arquivos que não devem ser versionados
+## 21. Arquivos que não devem ser versionados
 
 Os arquivos abaixo não devem ser enviados para o Git:
 
@@ -549,7 +758,7 @@ htmlcov/
 
 ---
 
-## 15. Docker
+## 22. Docker
 
 Caso o projeto utilize Docker futuramente, esta seção deve explicar:
 
@@ -560,96 +769,113 @@ Caso o projeto utilize Docker futuramente, esta seção deve explicar:
 
 Exemplo para subir os containers:
 
-```bash
+```bat
 docker compose up --build
 ```
 
 Exemplo para parar os containers:
 
-```bash
+```bat
 docker compose down
 ```
 
 ---
 
-## 16. Resumo dos principais comandos
+## 23. Resumo dos principais comandos
+
+Executar configuração automática:
+
+```bat
+conf.bat
+```
 
 Instalar o pipx:
 
-```bash
-sudo apt update
-sudo apt install pipx
-pipx ensurepath
+```bat
+py -m pip install --user pipx
+py -m pipx ensurepath
 ```
 
 Instalar o Poetry:
 
-```bash
+```bat
 pipx install poetry
 ```
 
 Atualizar o Poetry:
 
-```bash
+```bat
 pipx upgrade poetry
 ```
 
 Configurar ambiente virtual dentro do projeto:
 
-```bash
+```bat
 poetry config virtualenvs.in-project true --local
 ```
 
 Instalar o Python 3.13 pelo Poetry:
 
-```bash
+```bat
 poetry python install 3.13
+```
+
+Listar versões de Python disponíveis para o Poetry:
+
+```bat
+poetry python list
 ```
 
 Configurar o projeto para usar Python 3.13:
 
-```bash
+```bat
 poetry env use 3.13
 ```
 
 Instalar dependências:
 
-```bash
+```bat
 poetry install
 ```
 
 Rodar aplicação:
 
-```bash
+```bat
 poetry run task run
 ```
 
 Rodar lint:
 
-```bash
+```bat
 poetry run task lint
 ```
 
 Formatar código:
 
-```bash
+```bat
 poetry run task format
 ```
 
 Rodar testes:
 
-```bash
+```bat
 poetry run task test
 ```
 
-Ativar ambiente virtual:
+Ativar ambiente virtual no CMD:
 
-```bash
-eval $(poetry env activate)
+```bat
+.venv\Scripts\activate.bat
+```
+
+Ativar ambiente virtual no PowerShell:
+
+```powershell
+.venv\Scripts\Activate.ps1
 ```
 
 Sair do ambiente virtual:
 
-```bash
+```bat
 deactivate
 ```
