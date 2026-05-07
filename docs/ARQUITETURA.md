@@ -23,6 +23,7 @@ O projeto utiliza uma arquitetura em camadas, separando responsabilidades entre 
 
 Cada módulo da aplicação seguirá a seguinte estrutura:
 
+```text
 app/
 └── nome_do_modulo/
     ├── router.py
@@ -30,9 +31,10 @@ app/
     ├── service.py
     ├── repository.py
     └── models.py
-
+```
 Exemplo no módulo de usuários:
 
+```text
 app/
 └── users/
     ├── router.py
@@ -40,6 +42,7 @@ app/
     ├── service.py
     ├── repository.py
     └── models.py
+```
 
 ## 3. Responsabilidade de Cada Camada
 
@@ -197,6 +200,7 @@ Os próximos módulos da API devem seguir a mesma estrutura.
 
 Por exemplo, o módulo de medições poderá ser organizado assim:
 
+```text
 app/
 └── measurements/
     ├── router.py
@@ -204,9 +208,11 @@ app/
     ├── service.py
     ├── repository.py
     └── models.py
+```
 
 O módulo de relatórios poderá seguir a mesma ideia:
 
+```text
 app/
 └── reports/
     ├── router.py
@@ -214,9 +220,11 @@ app/
     ├── service.py
     ├── repository.py
     └── models.py
+```
 
 E o módulo de autenticação:
 
+```text
 app/
 └── auth/
     ├── router.py
@@ -224,6 +232,7 @@ app/
     ├── service.py
     ├── repository.py
     └── models.py
+```
 
 Dessa forma, todos os módulos terão uma organização parecida, facilitando o entendimento do projeto por qualquer integrante do grupo.
 
