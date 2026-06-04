@@ -1,10 +1,10 @@
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 
-from acompanhamento_cardiaco.security import gerar_hash_senha
-from acompanhamento_cardiaco.users.user_models import User
-from acompanhamento_cardiaco.users.user_repository import UserRepository
-from acompanhamento_cardiaco.users.user_schemas import (
+from acompanhamento_cardiaco.acompanhamento_cardiaco.security import gerar_hash_senha
+from acompanhamento_cardiaco.acompanhamento_cardiaco.users.user_models import User
+from acompanhamento_cardiaco.acompanhamento_cardiaco.users.user_repository import UserRepository
+from acompanhamento_cardiaco.acompanhamento_cardiaco.users.user_schemas import (
     CreateUserResponse,
     UserRegistrationRequest,
 )
