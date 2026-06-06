@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 
+from acompanhamento_cardiaco.auth.auth_router import router as auth_router
 from acompanhamento_cardiaco.database import Base, engine
 from acompanhamento_cardiaco.measurements.measurement_router import (
     router as measurements_router,
@@ -21,3 +22,4 @@ app = FastAPI(
 
 app.include_router(users_router, prefix="/v1")
 app.include_router(measurements_router, prefix="/v1")
+app.include_router(auth_router, prefix="/v1")

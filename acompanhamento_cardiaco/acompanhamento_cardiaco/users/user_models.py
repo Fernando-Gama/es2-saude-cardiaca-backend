@@ -3,7 +3,7 @@ from datetime import date
 from sqlalchemy import Date, String
 from sqlalchemy.orm import Mapped, mapped_column
 
-from acompanhamento_cardiaco.database import Base
+from acompanhamento_cardiaco.acompanhamento_cardiaco.database import Base
 
 
 class User(Base):
