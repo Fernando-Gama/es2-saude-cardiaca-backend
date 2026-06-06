@@ -1,4 +1,4 @@
-from acompanhamento_cardiaco.acompanhamento_cardiaco.users.user_repository import UserRepository
+from acompanhamento_cardiaco.users.user_repository import UserRepository
 
 
 class AuthRepository:
