@@ -8,6 +8,7 @@ from acompanhamento_cardiaco.reports import report_service as report_service_mod
 from acompanhamento_cardiaco.reports.report_service import ReportService
 
 ALERTA_SEM_MEDICOES = 'Nenhuma medição encontrada para o período informado.'
+USUARIO_ID = 1
 
 
 class FakeMeasurementRepository:
@@ -17,11 +18,18 @@ class FakeMeasurementRepository:
         """Inicializa o repository fake."""
         self.db = db
         self.medicoes = []
+        self.id_usuario_buscado = None
         self.data_inicial_buscada = None
         self.data_final_buscada = None
 
-    def listar_por_periodo(self, data_inicial=None, data_final=None):
+    def listar_por_usuario_e_periodo(
+        self,
+        id_usuario,
+        data_inicial=None,
+        data_final=None,
+    ):
         """Simula a listagem de medições por período."""
+        self.id_usuario_buscado = id_usuario
         self.data_inicial_buscada = data_inicial
         self.data_final_buscada = data_final
         return self.medicoes
@@ -97,6 +105,7 @@ def test_deve_gerar_relatorio_com_medias_historico_e_alertas(
     service = ReportService(db=None)
 
     resposta = service.gerar_relatorio_saude_cardiaca(
+        id_usuario=USUARIO_ID,
         data_inicial=date(2026, 6, 1),
         data_final=date(2026, 6, 30),
     )
@@ -115,6 +124,7 @@ def test_deve_gerar_relatorio_com_medias_historico_e_alertas(
     assert resposta.historico[0].dataMedicao == date(2026, 6, 1)
     assert resposta.historico[1].dataMedicao == date(2026, 6, 2)
     assert len(resposta.alertas) == 6
+    assert repository_fake.id_usuario_buscado == USUARIO_ID
     assert repository_fake.data_inicial_buscada == date(2026, 6, 1)
     assert repository_fake.data_final_buscada == date(2026, 6, 30)
 
@@ -125,7 +135,7 @@ def test_deve_gerar_relatorio_vazio_quando_nao_houver_medicoes(
     """Deve gerar relatório vazio quando não houver medições no período."""
     service = ReportService(db=None)
 
-    resposta = service.gerar_relatorio_saude_cardiaca()
+    resposta = service.gerar_relatorio_saude_cardiaca(id_usuario=USUARIO_ID)
 
     assert resposta.resumo.totalMedicoes == 0
     assert resposta.resumo.mediaPressaoSistolica is None
@@ -142,6 +152,7 @@ def test_deve_retornar_erro_400_quando_periodo_for_invalido(
 
     with pytest.raises(HTTPException) as erro:
         service.gerar_relatorio_saude_cardiaca(
+            id_usuario=USUARIO_ID,
             data_inicial=date(2026, 6, 30),
             data_final=date(2026, 6, 1),
         )

@@ -26,16 +26,19 @@ class MeasurementService:
     def cadastrar_medicao(
         self,
         dados_medicao: MeasurementRequest,
+        id_usuario: int,
     ) -> CreateMeasurementResponse:
         """Cadastra uma nova medição cardíaca no sistema.
 
         Args:
             dados_medicao: Dados recebidos para criação da medição.
+            id_usuario: Identificador do usuário autenticado.
 
         Returns:
             CreateMeasurementResponse: Dados da medição criada.
         """
         medicao = Medicao(
+            id_usuario=id_usuario,
             pressao_sistolica=dados_medicao.pressaoSistolica,
             pressao_diastolica=dados_medicao.pressaoDiastolica,
             frequencia_cardiaca=dados_medicao.frequenciaCardiaca,
@@ -55,20 +58,28 @@ class MeasurementService:
             mensagem='Medição criada com sucesso',
         )
 
-    def listar_medicoes(self) -> list[MeasurementResponse]:
+    def listar_medicoes(self, id_usuario: int) -> list[MeasurementResponse]:
         """Lista todas as medições cardíacas cadastradas.
+
+        Args:
+            id_usuario: Identificador do usuário autenticado.
 
         Returns:
             list[MeasurementResponse]: Lista de medições cadastradas.
         """
-        medicoes = self.repository.listar()
+        medicoes = self.repository.listar_por_usuario(id_usuario)
         return [self._montar_resposta_medicao(medicao) for medicao in medicoes]
 
-    def buscar_medicao(self, id_medicao: int) -> MeasurementResponse:
+    def buscar_medicao(
+        self,
+        id_medicao: int,
+        id_usuario: int,
+    ) -> MeasurementResponse:
         """Busca uma medição cardíaca pelo identificador.
 
         Args:
             id_medicao: Identificador da medição.
+            id_usuario: Identificador do usuário autenticado.
 
         Returns:
             MeasurementResponse: Dados da medição encontrada.
@@ -76,19 +87,21 @@ class MeasurementService:
         Raises:
             HTTPException: Quando a medição não existe.
         """
-        medicao = self._buscar_medicao_existente(id_medicao)
+        medicao = self._buscar_medicao_existente(id_medicao, id_usuario)
         return self._montar_resposta_medicao(medicao)
 
     def atualizar_medicao(
         self,
         id_medicao: int,
         dados_medicao: MeasurementRequest,
+        id_usuario: int,
     ) -> MeasurementResponse:
         """Atualiza uma medição cardíaca existente.
 
         Args:
             id_medicao: Identificador da medição.
             dados_medicao: Dados recebidos para atualização da medição.
+            id_usuario: Identificador do usuário autenticado.
 
         Returns:
             MeasurementResponse: Dados da medição atualizada.
@@ -96,7 +109,7 @@ class MeasurementService:
         Raises:
             HTTPException: Quando a medição não existe.
         """
-        medicao = self._buscar_medicao_existente(id_medicao)
+        medicao = self._buscar_medicao_existente(id_medicao, id_usuario)
 
         medicao.pressao_sistolica = dados_medicao.pressaoSistolica
         medicao.pressao_diastolica = dados_medicao.pressaoDiastolica
@@ -112,23 +125,29 @@ class MeasurementService:
         medicao_atualizada = self.repository.atualizar(medicao)
         return self._montar_resposta_medicao(medicao_atualizada)
 
-    def remover_medicao(self, id_medicao: int) -> None:
+    def remover_medicao(self, id_medicao: int, id_usuario: int) -> None:
         """Remove uma medição cardíaca existente.
 
         Args:
             id_medicao: Identificador da medição.
+            id_usuario: Identificador do usuário autenticado.
 
         Raises:
             HTTPException: Quando a medição não existe.
         """
-        medicao = self._buscar_medicao_existente(id_medicao)
+        medicao = self._buscar_medicao_existente(id_medicao, id_usuario)
         self.repository.remover(medicao)
 
-    def _buscar_medicao_existente(self, id_medicao: int) -> Medicao:
+    def _buscar_medicao_existente(
+        self,
+        id_medicao: int,
+        id_usuario: int,
+    ) -> Medicao:
         """Busca uma medição existente ou levanta erro 404.
 
         Args:
             id_medicao: Identificador da medição.
+            id_usuario: Identificador do usuário autenticado.
 
         Returns:
             Medicao: Medição encontrada.
@@ -136,7 +155,7 @@ class MeasurementService:
         Raises:
             HTTPException: Quando a medição não existe.
         """
-        medicao = self.repository.buscar_por_id(id_medicao)
+        medicao = self.repository.buscar_por_id_e_usuario(id_medicao, id_usuario)
 
         if not medicao:
             raise HTTPException(
