@@ -1,13 +1,13 @@
 from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
 
-from acompanhamento_cardiaco.acompanhamento_cardiaco.database import get_db
-from acompanhamento_cardiaco.acompanhamento_cardiaco.users.user_schemas import (
+from acompanhamento_cardiaco.database import get_db
+from acompanhamento_cardiaco.users.user_schemas import (
     CreateUserResponse,
     ErrorResponse,
     UserRegistrationRequest,
 )
-from acompanhamento_cardiaco.acompanhamento_cardiaco.users.user_service import UserService
+from acompanhamento_cardiaco.users.user_service import UserService
 
 router = APIRouter(
     prefix="/users",
