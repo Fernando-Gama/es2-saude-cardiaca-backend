@@ -6,7 +6,7 @@ from acompanhamento_cardiaco.auth.jwt_handler import decode_token
 bearer_scheme = HTTPBearer(auto_error=False)
 
 
-def get_current_user_id(
+async def get_current_user_id(
     credentials: HTTPAuthorizationCredentials | None = Depends(bearer_scheme),
 ) -> int:
     """Retorna o id do usuário autenticado pelo token Bearer."""

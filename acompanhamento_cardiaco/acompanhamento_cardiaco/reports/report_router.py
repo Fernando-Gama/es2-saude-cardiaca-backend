@@ -37,7 +37,7 @@ router = APIRouter(
         },
     },
 )
-def gerar_relatorio_saude_cardiaca(
+async def gerar_relatorio_saude_cardiaca(
     data_inicial: date | None = Query(
         default=None,
         alias='dataInicial',

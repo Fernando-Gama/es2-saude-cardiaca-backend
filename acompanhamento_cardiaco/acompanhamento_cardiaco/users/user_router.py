@@ -36,7 +36,7 @@ router = APIRouter(
         },
     },
 )
-def cadastrar_usuario(
+async def cadastrar_usuario(
     dados_usuario: UserRegistrationRequest,
     db: Session = Depends(get_db),
 ) -> CreateUserResponse:

@@ -32,7 +32,7 @@ router = APIRouter(
         },
     },
 )
-def cadastrar_medicao(
+async def cadastrar_medicao(
     dados_medicao: MeasurementRequest,
     id_usuario_atual: int = Depends(get_current_user_id),
     db: Session = Depends(get_db),
@@ -64,7 +64,7 @@ def cadastrar_medicao(
         },
     },
 )
-def listar_medicoes(
+async def listar_medicoes(
     id_usuario_atual: int = Depends(get_current_user_id),
     db: Session = Depends(get_db),
 ) -> list[MeasurementResponse]:
@@ -98,7 +98,7 @@ def listar_medicoes(
         },
     },
 )
-def buscar_medicao(
+async def buscar_medicao(
     id_medicao: int,
     id_usuario_atual: int = Depends(get_current_user_id),
     db: Session = Depends(get_db),
@@ -134,7 +134,7 @@ def buscar_medicao(
         },
     },
 )
-def atualizar_medicao(
+async def atualizar_medicao(
     id_medicao: int,
     dados_medicao: MeasurementRequest,
     id_usuario_atual: int = Depends(get_current_user_id),
@@ -171,7 +171,7 @@ def atualizar_medicao(
         },
     },
 )
-def remover_medicao(
+async def remover_medicao(
     id_medicao: int,
     id_usuario_atual: int = Depends(get_current_user_id),
     db: Session = Depends(get_db),
