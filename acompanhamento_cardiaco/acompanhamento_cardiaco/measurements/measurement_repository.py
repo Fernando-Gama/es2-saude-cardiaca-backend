@@ -1,3 +1,5 @@
+from datetime import date
+
 from sqlalchemy import select
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
@@ -23,6 +25,32 @@ class MeasurementRepository:
             list[Medicao]: Lista de medições encontradas.
         """
         stmt = select(Medicao)
+        return list(self.db.execute(stmt).scalars().all())
+
+    def listar_por_periodo(
+        self,
+        data_inicial: date | None = None,
+        data_final: date | None = None,
+    ) -> list[Medicao]:
+        """Lista medições filtradas por período.
+
+        Args:
+            data_inicial: Data inicial do filtro.
+            data_final: Data final do filtro.
+
+        Returns:
+            list[Medicao]: Lista de medições encontradas no período.
+        """
+        stmt = select(Medicao)
+
+        if data_inicial:
+            stmt = stmt.where(Medicao.data_medicao >= data_inicial)
+
+        if data_final:
+            stmt = stmt.where(Medicao.data_medicao <= data_final)
+
+        stmt = stmt.order_by(Medicao.data_medicao)
+
         return list(self.db.execute(stmt).scalars().all())
 
     def buscar_por_id(self, id_medicao: int) -> Medicao | None:
