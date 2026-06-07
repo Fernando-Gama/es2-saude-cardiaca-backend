@@ -12,6 +12,7 @@ from acompanhamento_cardiaco.measurements.measurement_service import (
 )
 
 MEDICAO_ID = 1
+USUARIO_ID = 1
 HTTP_NOT_FOUND = status.HTTP_404_NOT_FOUND
 DATA_MEDICAO = date(2026, 5, 30)
 
@@ -39,14 +40,17 @@ class FakeMeasurementRepository:
         self.medicao_atualizada = None
         self.medicao_removida = None
         self.id_buscado = None
+        self.id_usuario_buscado = None
 
-    def listar(self):
+    def listar_por_usuario(self, id_usuario):
         """Simula a listagem de medições."""
+        self.id_usuario_buscado = id_usuario
         return self.medicoes
 
-    def buscar_por_id(self, id_medicao):
+    def buscar_por_id_e_usuario(self, id_medicao, id_usuario):
         """Simula a busca de medição por ID."""
         self.id_buscado = id_medicao
+        self.id_usuario_buscado = id_usuario
         return self.medicao_existente
 
     def salvar(self, medicao):
@@ -87,6 +91,7 @@ def medicao_existente():
     """Retorna uma medição existente."""
     return FakeMedicao(
         id_medicao=MEDICAO_ID,
+        id_usuario=USUARIO_ID,
         pressao_sistolica=120,
         pressao_diastolica=80,
         frequencia_cardiaca=72,
@@ -139,7 +144,7 @@ def test_deve_cadastrar_medicao_com_sucesso(
 
     service = MeasurementService(db=None)
 
-    resposta = service.cadastrar_medicao(dados_medicao_valida)
+    resposta = service.cadastrar_medicao(dados_medicao_valida, USUARIO_ID)
 
     assert resposta.idMedicao == MEDICAO_ID
     assert resposta.pressaoSistolica == 120
@@ -157,6 +162,7 @@ def test_deve_cadastrar_medicao_com_sucesso(
     medicao_salva = repository_fake.medicao_salva
 
     assert medicao_salva is not None
+    assert medicao_salva.id_usuario == USUARIO_ID
     assert medicao_salva.pressao_sistolica == 120
     assert medicao_salva.pressao_diastolica == 80
     assert medicao_salva.frequencia_cardiaca == 72
@@ -179,7 +185,7 @@ def test_deve_listar_medicoes(
 
     service = MeasurementService(db=None)
 
-    resposta = service.listar_medicoes()
+    resposta = service.listar_medicoes(USUARIO_ID)
 
     assert len(resposta) == 1
     assert resposta[0].idMedicao == MEDICAO_ID
@@ -193,6 +199,7 @@ def test_deve_listar_medicoes(
     assert resposta[0].tontura is False
     assert resposta[0].observacoes == 'Medição sem sintomas.'
     assert resposta[0].dataMedicao == DATA_MEDICAO
+    assert repository_fake.id_usuario_buscado == USUARIO_ID
 
 
 def test_deve_buscar_medicao_por_id(
@@ -205,7 +212,7 @@ def test_deve_buscar_medicao_por_id(
 
     service = MeasurementService(db=None)
 
-    resposta = service.buscar_medicao(MEDICAO_ID)
+    resposta = service.buscar_medicao(MEDICAO_ID, USUARIO_ID)
 
     assert resposta.idMedicao == MEDICAO_ID
     assert resposta.pressaoSistolica == 120
@@ -219,6 +226,7 @@ def test_deve_buscar_medicao_por_id(
     assert resposta.observacoes == 'Medição sem sintomas.'
     assert resposta.dataMedicao == DATA_MEDICAO
     assert repository_fake.id_buscado == MEDICAO_ID
+    assert repository_fake.id_usuario_buscado == USUARIO_ID
 
 
 def test_deve_atualizar_medicao(
@@ -241,7 +249,11 @@ def test_deve_atualizar_medicao(
 
     service = MeasurementService(db=None)
 
-    resposta = service.atualizar_medicao(MEDICAO_ID, dados_medicao_valida)
+    resposta = service.atualizar_medicao(
+        MEDICAO_ID,
+        dados_medicao_valida,
+        USUARIO_ID,
+    )
 
     assert resposta.idMedicao == MEDICAO_ID
     assert resposta.pressaoSistolica == 130
@@ -280,11 +292,12 @@ def test_deve_remover_medicao(
 
     service = MeasurementService(db=None)
 
-    resposta = service.remover_medicao(MEDICAO_ID)
+    resposta = service.remover_medicao(MEDICAO_ID, USUARIO_ID)
 
     assert resposta is None
     assert repository_fake.medicao_removida == medicao_existente
     assert repository_fake.id_buscado == MEDICAO_ID
+    assert repository_fake.id_usuario_buscado == USUARIO_ID
 
 
 def test_deve_retornar_erro_404_quando_medicao_nao_existir_ao_buscar(
@@ -294,7 +307,7 @@ def test_deve_retornar_erro_404_quando_medicao_nao_existir_ao_buscar(
     service = MeasurementService(db=None)
 
     with pytest.raises(HTTPException) as erro:
-        service.buscar_medicao(MEDICAO_ID)
+        service.buscar_medicao(MEDICAO_ID, USUARIO_ID)
 
     assert erro.value.status_code == HTTP_NOT_FOUND
     assert erro.value.detail['codigo'] == HTTP_NOT_FOUND
@@ -310,7 +323,7 @@ def test_deve_retornar_erro_404_quando_medicao_nao_existir_ao_atualizar(
     service = MeasurementService(db=None)
 
     with pytest.raises(HTTPException) as erro:
-        service.atualizar_medicao(MEDICAO_ID, dados_medicao_valida)
+        service.atualizar_medicao(MEDICAO_ID, dados_medicao_valida, USUARIO_ID)
 
     assert erro.value.status_code == HTTP_NOT_FOUND
     assert erro.value.detail['codigo'] == HTTP_NOT_FOUND
@@ -325,7 +338,7 @@ def test_deve_retornar_erro_404_quando_medicao_nao_existir_ao_remover(
     service = MeasurementService(db=None)
 
     with pytest.raises(HTTPException) as erro:
-        service.remover_medicao(MEDICAO_ID)
+        service.remover_medicao(MEDICAO_ID, USUARIO_ID)
 
     assert erro.value.status_code == HTTP_NOT_FOUND
     assert erro.value.detail['codigo'] == HTTP_NOT_FOUND

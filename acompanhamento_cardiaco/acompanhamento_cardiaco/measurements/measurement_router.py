@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, Response, status
 from sqlalchemy.orm import Session
 
+from acompanhamento_cardiaco.auth.auth_dependencies import get_current_user_id
 from acompanhamento_cardiaco.database import get_db
 from acompanhamento_cardiaco.measurements.measurement_schemas import (
     CreateMeasurementResponse,
@@ -31,21 +32,23 @@ router = APIRouter(
         },
     },
 )
-def cadastrar_medicao(
+async def cadastrar_medicao(
     dados_medicao: MeasurementRequest,
+    id_usuario_atual: int = Depends(get_current_user_id),
     db: Session = Depends(get_db),
 ) -> CreateMeasurementResponse:
     """Cadastra uma nova medição cardíaca.
 
     Args:
         dados_medicao: Dados enviados para criação da medição.
+        id_usuario_atual: Identificador do usuário autenticado.
         db: Sessão ativa com o banco de dados.
 
     Returns:
         CreateMeasurementResponse: Dados da medição criada e mensagem de sucesso.
     """
     service = MeasurementService(db)
-    return service.cadastrar_medicao(dados_medicao)
+    return service.cadastrar_medicao(dados_medicao, id_usuario_atual)
 
 
 @router.get(
@@ -61,19 +64,21 @@ def cadastrar_medicao(
         },
     },
 )
-def listar_medicoes(
+async def listar_medicoes(
+    id_usuario_atual: int = Depends(get_current_user_id),
     db: Session = Depends(get_db),
 ) -> list[MeasurementResponse]:
     """Lista todas as medições cardíacas cadastradas.
 
     Args:
+        id_usuario_atual: Identificador do usuário autenticado.
         db: Sessão ativa com o banco de dados.
 
     Returns:
         list[MeasurementResponse]: Lista de medições cadastradas.
     """
     service = MeasurementService(db)
-    return service.listar_medicoes()
+    return service.listar_medicoes(id_usuario_atual)
 
 
 @router.get(
@@ -93,21 +98,23 @@ def listar_medicoes(
         },
     },
 )
-def buscar_medicao(
+async def buscar_medicao(
     id_medicao: int,
+    id_usuario_atual: int = Depends(get_current_user_id),
     db: Session = Depends(get_db),
 ) -> MeasurementResponse:
     """Busca uma medição cardíaca pelo identificador.
 
     Args:
         id_medicao: Identificador da medição.
+        id_usuario_atual: Identificador do usuário autenticado.
         db: Sessão ativa com o banco de dados.
 
     Returns:
         MeasurementResponse: Dados da medição encontrada.
     """
     service = MeasurementService(db)
-    return service.buscar_medicao(id_medicao)
+    return service.buscar_medicao(id_medicao, id_usuario_atual)
 
 
 @router.put(
@@ -127,9 +134,10 @@ def buscar_medicao(
         },
     },
 )
-def atualizar_medicao(
+async def atualizar_medicao(
     id_medicao: int,
     dados_medicao: MeasurementRequest,
+    id_usuario_atual: int = Depends(get_current_user_id),
     db: Session = Depends(get_db),
 ) -> MeasurementResponse:
     """Atualiza uma medição cardíaca existente.
@@ -137,13 +145,14 @@ def atualizar_medicao(
     Args:
         id_medicao: Identificador da medição.
         dados_medicao: Dados enviados para atualização da medição.
+        id_usuario_atual: Identificador do usuário autenticado.
         db: Sessão ativa com o banco de dados.
 
     Returns:
         MeasurementResponse: Dados da medição atualizada.
     """
     service = MeasurementService(db)
-    return service.atualizar_medicao(id_medicao, dados_medicao)
+    return service.atualizar_medicao(id_medicao, dados_medicao, id_usuario_atual)
 
 
 @router.delete(
@@ -162,19 +171,21 @@ def atualizar_medicao(
         },
     },
 )
-def remover_medicao(
+async def remover_medicao(
     id_medicao: int,
+    id_usuario_atual: int = Depends(get_current_user_id),
     db: Session = Depends(get_db),
 ) -> Response:
     """Remove uma medição cardíaca existente.
 
     Args:
         id_medicao: Identificador da medição.
+        id_usuario_atual: Identificador do usuário autenticado.
         db: Sessão ativa com o banco de dados.
 
     Returns:
         Response: Resposta sem conteúdo após remoção.
     """
     service = MeasurementService(db)
-    service.remover_medicao(id_medicao)
+    service.remover_medicao(id_medicao, id_usuario_atual)
     return Response(status_code=status.HTTP_204_NO_CONTENT)

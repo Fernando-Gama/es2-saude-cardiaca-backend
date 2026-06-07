@@ -2,7 +2,7 @@ from sqlalchemy import select
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
-from acompanhamento_cardiaco.acompanhamento_cardiaco.users.user_models import User
+from acompanhamento_cardiaco.users.user_models import User
 
 
 class UserRepository:

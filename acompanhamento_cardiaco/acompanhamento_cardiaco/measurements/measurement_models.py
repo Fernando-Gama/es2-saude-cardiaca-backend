@@ -1,6 +1,6 @@
 from datetime import date
 
-from sqlalchemy import Boolean, Date, Float, Integer, String
+from sqlalchemy import Boolean, Date, Float, ForeignKey, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column
 
 from acompanhamento_cardiaco.database import Base
@@ -15,6 +15,12 @@ class Medicao(Base):
         primary_key=True,
         index=True,
         autoincrement=True,
+    )
+
+    id_usuario: Mapped[int] = mapped_column(
+        ForeignKey('users.id_usuario'),
+        nullable=False,
+        index=True,
     )
 
     pressao_sistolica: Mapped[int] = mapped_column(

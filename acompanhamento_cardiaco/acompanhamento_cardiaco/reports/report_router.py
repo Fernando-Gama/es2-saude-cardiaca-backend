@@ -3,6 +3,7 @@ from datetime import date
 from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy.orm import Session
 
+from acompanhamento_cardiaco.auth.auth_dependencies import get_current_user_id
 from acompanhamento_cardiaco.database import get_db
 from acompanhamento_cardiaco.reports.report_schemas import (
     HeartHealthReportResponse,
@@ -36,7 +37,7 @@ router = APIRouter(
         },
     },
 )
-def gerar_relatorio_saude_cardiaca(
+async def gerar_relatorio_saude_cardiaca(
     data_inicial: date | None = Query(
         default=None,
         alias='dataInicial',
@@ -47,6 +48,7 @@ def gerar_relatorio_saude_cardiaca(
         alias='dataFinal',
         description='Data final do relatório no formato AAAA-MM-DD.',
     ),
+    id_usuario_atual: int = Depends(get_current_user_id),
     db: Session = Depends(get_db),
 ) -> HeartHealthReportResponse:
     """Gera relatório de evolução da saúde cardíaca.
@@ -54,10 +56,15 @@ def gerar_relatorio_saude_cardiaca(
     Args:
         data_inicial: Data inicial usada no filtro.
         data_final: Data final usada no filtro.
+        id_usuario_atual: Identificador do usuário autenticado.
         db: Sessão ativa com o banco de dados.
 
     Returns:
         HeartHealthReportResponse: Relatório consolidado de saúde cardíaca.
     """
     service = ReportService(db)
-    return service.gerar_relatorio_saude_cardiaca(data_inicial, data_final)
+    return service.gerar_relatorio_saude_cardiaca(
+        id_usuario=id_usuario_atual,
+        data_inicial=data_inicial,
+        data_final=data_final,
+    )

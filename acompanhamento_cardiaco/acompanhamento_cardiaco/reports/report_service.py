@@ -32,13 +32,15 @@ class ReportService:
 
     def gerar_relatorio_saude_cardiaca(
         self,
+        id_usuario: int,
         data_inicial: date | None = None,
         data_final: date | None = None,
     ) -> HeartHealthReportResponse:
         """Gera relatório com médias, histórico e alertas cardíacos."""
         self._validar_periodo(data_inicial, data_final)
 
-        medicoes = self.measurement_repository.listar_por_periodo(
+        medicoes = self.measurement_repository.listar_por_usuario_e_periodo(
+            id_usuario=id_usuario,
             data_inicial=data_inicial,
             data_final=data_final,
         )
