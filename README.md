@@ -51,6 +51,7 @@ Back-end de uma API REST para acompanhamento de saúde cardíaca. O sistema perm
 │   ├── pyproject.toml
 │   └── poetry.lock
 ├── docs/
+│   └── postman/
 ├── LICENSE
 └── README.md
 ```
@@ -92,6 +93,33 @@ A documentação Swagger ficará disponível em:
 ```text
 http://localhost:8000/docs
 ```
+
+## Teste de serviços com Postman
+
+A pasta [docs/postman](docs/postman) contém os arquivos usados para demonstrar a
+API em uma ferramenta de teste de serviços:
+
+- `API_Acompanhamento_Cardiaco_Roteiro_Apresentacao.postman_collection.json`
+- `Local_Saude_Cardiaca_Apresentacao.postman_environment.json`
+
+Para usar no Postman:
+
+1. Importe a collection.
+2. Importe o environment local.
+3. Execute a API em `http://127.0.0.1:8000`.
+4. Selecione o environment `Local - Saúde Cardíaca - Apresentação`.
+5. Execute as requisições na ordem do roteiro.
+
+A collection cobre o fluxo principal da apresentação:
+
+- criar conta;
+- fazer login;
+- salvar o token no environment;
+- cadastrar medição;
+- listar, buscar, atualizar e remover medição;
+- gerar relatório de saúde cardíaca;
+- renovar token;
+- demonstrar cenários de erro.
 
 ## Configurações
 
