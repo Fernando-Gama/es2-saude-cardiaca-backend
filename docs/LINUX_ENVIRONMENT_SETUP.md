@@ -1,6 +1,6 @@
-# Configuração do Ambiente
+# Configuração do Ambiente no Linux
 
-Este documento explica como configurar o ambiente de desenvolvimento do projeto.
+Este documento explica como configurar o ambiente de desenvolvimento do projeto **API de Acompanhamento de Saúde Cardíaca** no Linux.
 
 A ideia é que qualquer pessoa consiga clonar o repositório, instalar as dependências e executar o projeto localmente.
 
@@ -139,14 +139,16 @@ git clone URL_DO_REPOSITORIO
 Entre na pasta do projeto:
 
 ```bash
-cd NOME_DO_PROJETO
+cd NOME_DO_REPOSITORIO/acompanhamento_cardiaco
 ```
+
+Os comandos do Poetry devem ser executados na pasta que contém o arquivo `pyproject.toml`.
 
 ---
 
 ## 6. Instalando as dependências do projeto
 
-Dentro da pasta do projeto, execute:
+Dentro da pasta que contém o arquivo `pyproject.toml`, execute:
 
 ```bash
 poetry install
@@ -159,7 +161,9 @@ As dependências principais do projeto são instaladas a partir da seção:
 ```toml
 [project]
 dependencies = [
-    "fastapi[standard] (>=0.136.1,<0.137.0)"
+    "fastapi[standard] (>=0.136.1,<0.137.0)",
+    "sqlalchemy (>=2.0.49,<3.0.0)",
+    "passlib (>=1.7.4,<2.0.0)"
 ]
 ```
 
@@ -228,13 +232,19 @@ poetry run task run
 Esse comando executa a task `run`, definida no `pyproject.toml`:
 
 ```toml
-run = 'fastapi dev fastapi_zero/app.py'
+run = "fastapi dev acompanhamento_cardiaco/main.py"
 ```
 
 Ou seja, ele executa internamente:
 
 ```bash
-fastapi dev fastapi_zero/app.py
+fastapi dev acompanhamento_cardiaco/main.py
+```
+
+Depois de iniciar o servidor, a documentação automática da API fica disponível em:
+
+```text
+http://127.0.0.1:8000/docs
 ```
 
 ---
@@ -247,13 +257,13 @@ As tasks estão definidas no arquivo `pyproject.toml`:
 
 ```toml
 [tool.taskipy.tasks]
-lint = 'ruff check'
-pre_format = 'ruff check --fix'
-format = 'ruff format'
-run = 'fastapi dev fastapi_zero/app.py'
-pre_test = 'task lint'
-test = 'pytest -s -x --cov=fastapi_zero -vv'
-post_test = 'coverage html'
+lint = "ruff check ."
+pre_format = "ruff check . --fix"
+format = "ruff format ."
+run = "fastapi dev acompanhamento_cardiaco/main.py"
+pre_test = "task lint"
+test = "pytest -s -x --cov=acompanhamento_cardiaco -vv"
+post_test = "coverage html"
 ```
 
 ---
@@ -269,7 +279,7 @@ poetry run task run
 Internamente executa:
 
 ```bash
-fastapi dev fastapi_zero/app.py
+fastapi dev acompanhamento_cardiaco/main.py
 ```
 
 ---
@@ -285,7 +295,7 @@ poetry run task lint
 Internamente executa:
 
 ```bash
-ruff check
+ruff check .
 ```
 
 Esse comando aponta problemas de estilo, imports, erros simples e regras configuradas no Ruff.
@@ -303,7 +313,7 @@ poetry run task format
 Antes de executar o `format`, o Taskipy executa automaticamente a task `pre_format`:
 
 ```toml
-pre_format = 'ruff check --fix'
+pre_format = "ruff check . --fix"
 ```
 
 Ou seja, ao rodar:
@@ -315,13 +325,13 @@ poetry run task format
 O Taskipy executa primeiro:
 
 ```bash
-ruff check --fix
+ruff check . --fix
 ```
 
 Depois executa:
 
 ```bash
-ruff format
+ruff format .
 ```
 
 Na prática, esse comando tenta corrigir problemas automaticamente e depois formata o código.
@@ -339,7 +349,7 @@ poetry run task test
 Antes de executar os testes, o Taskipy executa automaticamente a task `pre_test`:
 
 ```toml
-pre_test = 'task lint'
+pre_test = "task lint"
 ```
 
 Ou seja, antes dos testes, ele roda:
@@ -351,7 +361,7 @@ task lint
 Depois executa:
 
 ```bash
-pytest -s -x --cov=fastapi_zero -vv
+pytest -s -x --cov=acompanhamento_cardiaco -vv
 ```
 
 Esse comando faz o seguinte:
@@ -359,13 +369,13 @@ Esse comando faz o seguinte:
 - `pytest`: executa os testes;
 - `-s`: permite mostrar saídas no terminal, como `print`;
 - `-x`: para a execução no primeiro erro;
-- `--cov=fastapi_zero`: calcula a cobertura de testes do pacote `fastapi_zero`;
+- `--cov=acompanhamento_cardiaco`: calcula a cobertura de testes do pacote principal do projeto;
 - `-vv`: mostra uma saída mais detalhada dos testes.
 
 Depois dos testes, o Taskipy executa automaticamente a task `post_test`:
 
 ```toml
-post_test = 'coverage html'
+post_test = "coverage html"
 ```
 
 Esse comando gera um relatório HTML de cobertura de testes.
@@ -391,26 +401,26 @@ Também é possível executar os comandos diretamente, sem usar o Taskipy.
 Rodar o projeto:
 
 ```bash
-poetry run fastapi dev fastapi_zero/app.py
+poetry run fastapi dev acompanhamento_cardiaco/main.py
 ```
 
 Rodar o lint:
 
 ```bash
-poetry run ruff check
+poetry run ruff check .
 ```
 
 Formatar o código:
 
 ```bash
-poetry run ruff check --fix
-poetry run ruff format
+poetry run ruff check . --fix
+poetry run ruff format .
 ```
 
 Rodar os testes:
 
 ```bash
-poetry run pytest -s -x --cov=fastapi_zero -vv
+poetry run pytest -s -x --cov=acompanhamento_cardiaco -vv
 ```
 
 Gerar relatório HTML de cobertura:
@@ -492,30 +502,7 @@ htmlcov/
 
 ---
 
-## 14. Docker
-
-Caso o projeto utilize Docker futuramente, esta seção deve explicar:
-
-- como construir a imagem;
-- como subir os containers;
-- como parar os containers;
-- quais serviços são usados, como banco de dados ou backend.
-
-Exemplo para subir os containers:
-
-```bash
-docker compose up --build
-```
-
-Exemplo para parar os containers:
-
-```bash
-docker compose down
-```
-
----
-
-## 15. Resumo dos principais comandos
+## 14. Resumo dos principais comandos
 
 Instalar o pipx:
 
