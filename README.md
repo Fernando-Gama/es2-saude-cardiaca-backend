@@ -8,7 +8,6 @@ Back-end de uma API REST para acompanhamento de saúde cardíaca. O sistema perm
 - Swagger local: <http://localhost:8000/docs>
 - OpenAPI/Swagger JSON: [docs/swagger/swagger.json](docs/swagger/swagger.json)
 - Arquitetura: [docs/ARQUITETURA.md](docs/ARQUITETURA.md)
-- Roteiro de apresentação: [docs/ROTEIRO_APRESENTACAO.md](docs/ROTEIRO_APRESENTACAO.md)
 - Setup Linux: [docs/LINUX_ENVIRONMENT_SETUP.md](docs/LINUX_ENVIRONMENT_SETUP.md)
 - Setup Windows: [docs/WINDOWS_ENVIRONMENT_SETUP.md](docs/WINDOWS_ENVIRONMENT_SETUP.md)
 
@@ -22,8 +21,6 @@ Back-end de uma API REST para acompanhamento de saúde cardíaca. O sistema perm
   [docs/swagger/swagger.json](docs/swagger/swagger.json)
 - Explicação da arquitetura e descrição da modularização:
   [docs/ARQUITETURA.md](docs/ARQUITETURA.md)
-- Roteiro para demonstração do sistema, testes, estrutura e Swagger:
-  [docs/ROTEIRO_APRESENTACAO.md](docs/ROTEIRO_APRESENTACAO.md)
 
 ## Funcionalidades
 
@@ -69,7 +66,6 @@ Back-end de uma API REST para acompanhamento de saúde cardíaca. O sistema perm
 │   ├── postman/
 │   ├── swagger/
 │   ├── ARQUITETURA.md
-│   └── ROTEIRO_APRESENTACAO.md
 ├── LICENSE
 └── README.md
 ```
@@ -135,7 +131,6 @@ Para usar no Postman:
 2. Importe o environment local.
 3. Execute a API em `http://127.0.0.1:8000`.
 4. Selecione o environment `Local - Saúde Cardíaca - Apresentação`.
-5. Execute as requisições na ordem do roteiro.
 
 A collection cobre o fluxo principal da apresentação:
 
