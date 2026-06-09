@@ -1,0 +1,1316 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "API de Acompanhamento de Saúde Cardíaca",
+    "description": "API REST para apoiar pacientes com problemas cardíacos no monitoramento da saúde.",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/v1/users": {
+      "post": {
+        "tags": [
+          "Usuários"
+        ],
+        "summary": "Criar conta",
+        "description": "Cadastra um novo usuário no sistema.",
+        "operationId": "cadastrar_usuario_v1_users_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserRegistrationRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateUserResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Campos obrigatórios não preenchidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "E-mail já cadastrado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno no servidor.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/measurements": {
+      "get": {
+        "tags": [
+          "Medições"
+        ],
+        "summary": "Listar medições",
+        "description": "Lista todas as medições de saúde cardíaca cadastradas.",
+        "operationId": "listar_medicoes_v1_measurements_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/MeasurementResponse"
+                  },
+                  "type": "array",
+                  "title": "Response Listar Medicoes V1 Measurements Get"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno no servidor.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Medições"
+        ],
+        "summary": "Criar medição",
+        "description": "Cadastra uma nova medição de saúde cardíaca.",
+        "operationId": "cadastrar_medicao_v1_measurements_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MeasurementRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateMeasurementResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno no servidor.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/v1/measurements/{id_medicao}": {
+      "get": {
+        "tags": [
+          "Medições"
+        ],
+        "summary": "Buscar medição",
+        "description": "Busca uma medição de saúde cardíaca pelo identificador.",
+        "operationId": "buscar_medicao_v1_measurements__id_medicao__get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id_medicao",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Id Medicao"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeasurementResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Medição não encontrada.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno no servidor.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Medições"
+        ],
+        "summary": "Atualizar medição",
+        "description": "Atualiza uma medição de saúde cardíaca existente.",
+        "operationId": "atualizar_medicao_v1_measurements__id_medicao__put",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id_medicao",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Id Medicao"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MeasurementRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeasurementResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Medição não encontrada.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno no servidor.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Medições"
+        ],
+        "summary": "Remover medição",
+        "description": "Remove uma medição de saúde cardíaca existente.",
+        "operationId": "remover_medicao_v1_measurements__id_medicao__delete",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id_medicao",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Id Medicao"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "404": {
+            "description": "Medição não encontrada.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno no servidor.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/auth/login": {
+      "post": {
+        "tags": [
+          "Autenticação"
+        ],
+        "summary": "Login",
+        "description": "Autentica um usuário por e-mail e senha.",
+        "operationId": "login_v1_auth_login_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/auth/refresh": {
+      "post": {
+        "tags": [
+          "Autenticação"
+        ],
+        "summary": "Refresh token",
+        "description": "Renova os tokens usando um refresh token válido.",
+        "operationId": "refresh_v1_auth_refresh_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RefreshTokenRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/reports/heart-health": {
+      "get": {
+        "tags": [
+          "Relatórios"
+        ],
+        "summary": "Relatório de saúde cardíaca",
+        "description": "Apresenta médias, histórico e alertas relacionados à evolução da saúde cardíaca.",
+        "operationId": "gerar_relatorio_saude_cardiaca_v1_reports_heart_health_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "dataInicial",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Data inicial do relatório no formato AAAA-MM-DD.",
+              "title": "Datainicial"
+            },
+            "description": "Data inicial do relatório no formato AAAA-MM-DD."
+          },
+          {
+            "name": "dataFinal",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Data final do relatório no formato AAAA-MM-DD.",
+              "title": "Datafinal"
+            },
+            "description": "Data final do relatório no formato AAAA-MM-DD."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HeartHealthReportResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Período inválido.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno no servidor.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "CreateMeasurementResponse": {
+        "properties": {
+          "idMedicao": {
+            "type": "integer",
+            "title": "Idmedicao",
+            "description": "Identificador único da medição."
+          },
+          "pressaoSistolica": {
+            "type": "integer",
+            "title": "Pressaosistolica"
+          },
+          "pressaoDiastolica": {
+            "type": "integer",
+            "title": "Pressaodiastolica"
+          },
+          "frequenciaCardiaca": {
+            "type": "integer",
+            "title": "Frequenciacardiaca"
+          },
+          "nivelOxigenacao": {
+            "type": "number",
+            "title": "Niveloxigenacao"
+          },
+          "pesoCorporal": {
+            "type": "number",
+            "title": "Pesocorporal"
+          },
+          "faltaAr": {
+            "type": "boolean",
+            "title": "Faltaar"
+          },
+          "dorPeito": {
+            "type": "boolean",
+            "title": "Dorpeito"
+          },
+          "tontura": {
+            "type": "boolean",
+            "title": "Tontura"
+          },
+          "observacoes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Observacoes"
+          },
+          "dataMedicao": {
+            "type": "string",
+            "format": "date",
+            "title": "Datamedicao"
+          },
+          "mensagem": {
+            "type": "string",
+            "title": "Mensagem",
+            "default": "Medição criada com sucesso"
+          }
+        },
+        "type": "object",
+        "required": [
+          "idMedicao",
+          "pressaoSistolica",
+          "pressaoDiastolica",
+          "frequenciaCardiaca",
+          "nivelOxigenacao",
+          "pesoCorporal",
+          "faltaAr",
+          "dorPeito",
+          "tontura",
+          "observacoes",
+          "dataMedicao"
+        ],
+        "title": "CreateMeasurementResponse",
+        "description": "Schema de resposta após criação de medição cardíaca."
+      },
+      "CreateUserResponse": {
+        "properties": {
+          "idUsuario": {
+            "type": "integer",
+            "title": "Idusuario",
+            "description": "Identificador único do usuário."
+          },
+          "nome": {
+            "type": "string",
+            "title": "Nome"
+          },
+          "sobrenome": {
+            "type": "string",
+            "title": "Sobrenome"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "title": "Email"
+          },
+          "celular": {
+            "type": "string",
+            "title": "Celular"
+          },
+          "dataNascimento": {
+            "type": "string",
+            "format": "date",
+            "title": "Datanascimento"
+          },
+          "sexo": {
+            "$ref": "#/components/schemas/SexoEnum"
+          },
+          "paisResidencia": {
+            "type": "string",
+            "title": "Paisresidencia"
+          },
+          "naturalidadeUF": {
+            "type": "string",
+            "title": "Naturalidadeuf"
+          },
+          "mensagem": {
+            "type": "string",
+            "title": "Mensagem",
+            "default": "Conta criada com sucesso"
+          }
+        },
+        "type": "object",
+        "required": [
+          "idUsuario",
+          "nome",
+          "sobrenome",
+          "email",
+          "celular",
+          "dataNascimento",
+          "sexo",
+          "paisResidencia",
+          "naturalidadeUF"
+        ],
+        "title": "CreateUserResponse",
+        "description": "Schema de resposta após criação de usuário."
+      },
+      "ErrorResponse": {
+        "properties": {
+          "codigo": {
+            "type": "integer",
+            "title": "Codigo",
+            "description": "Código HTTP do erro."
+          },
+          "mensagem": {
+            "type": "string",
+            "title": "Mensagem",
+            "description": "Mensagem explicando o erro ocorrido."
+          },
+          "detalhes": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Detalhes",
+            "description": "Detalhes adicionais sobre o erro, quando existirem."
+          }
+        },
+        "type": "object",
+        "required": [
+          "codigo",
+          "mensagem"
+        ],
+        "title": "ErrorResponse",
+        "description": "Schema padrão para respostas de erro da API."
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "HeartHealthReportResponse": {
+        "properties": {
+          "periodo": {
+            "$ref": "#/components/schemas/ReportPeriodResponse"
+          },
+          "resumo": {
+            "$ref": "#/components/schemas/ReportSummaryResponse"
+          },
+          "sintomas": {
+            "$ref": "#/components/schemas/SymptomsSummaryResponse"
+          },
+          "alertas": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Alertas"
+          },
+          "historico": {
+            "items": {
+              "$ref": "#/components/schemas/ReportHistoryItemResponse"
+            },
+            "type": "array",
+            "title": "Historico"
+          }
+        },
+        "type": "object",
+        "required": [
+          "periodo",
+          "resumo",
+          "sintomas",
+          "alertas",
+          "historico"
+        ],
+        "title": "HeartHealthReportResponse",
+        "description": "Schema de resposta do relatório de saúde cardíaca."
+      },
+      "LoginRequest": {
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "title": "Email"
+          },
+          "senha": {
+            "type": "string",
+            "minLength": 6,
+            "title": "Senha"
+          }
+        },
+        "type": "object",
+        "required": [
+          "email",
+          "senha"
+        ],
+        "title": "LoginRequest"
+      },
+      "MeasurementRequest": {
+        "properties": {
+          "pressaoSistolica": {
+            "type": "integer",
+            "title": "Pressaosistolica",
+            "description": "Pressão arterial sistólica."
+          },
+          "pressaoDiastolica": {
+            "type": "integer",
+            "title": "Pressaodiastolica",
+            "description": "Pressão arterial diastólica."
+          },
+          "frequenciaCardiaca": {
+            "type": "integer",
+            "title": "Frequenciacardiaca",
+            "description": "Frequência cardíaca medida."
+          },
+          "nivelOxigenacao": {
+            "type": "number",
+            "title": "Niveloxigenacao",
+            "description": "Nível de oxigenação."
+          },
+          "pesoCorporal": {
+            "type": "number",
+            "title": "Pesocorporal",
+            "description": "Peso corporal no dia da medição."
+          },
+          "faltaAr": {
+            "type": "boolean",
+            "title": "Faltaar",
+            "description": "Indica ocorrência de falta de ar."
+          },
+          "dorPeito": {
+            "type": "boolean",
+            "title": "Dorpeito",
+            "description": "Indica ocorrência de dor no peito."
+          },
+          "tontura": {
+            "type": "boolean",
+            "title": "Tontura",
+            "description": "Indica ocorrência de tontura."
+          },
+          "observacoes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Observacoes",
+            "description": "Observações adicionais sobre a medição."
+          },
+          "dataMedicao": {
+            "type": "string",
+            "format": "date",
+            "title": "Datamedicao",
+            "description": "Data da medição no formato AAAA-MM-DD."
+          }
+        },
+        "type": "object",
+        "required": [
+          "pressaoSistolica",
+          "pressaoDiastolica",
+          "frequenciaCardiaca",
+          "nivelOxigenacao",
+          "pesoCorporal",
+          "faltaAr",
+          "dorPeito",
+          "tontura",
+          "dataMedicao"
+        ],
+        "title": "MeasurementRequest",
+        "description": "Schema de entrada para criação e atualização de medição cardíaca."
+      },
+      "MeasurementResponse": {
+        "properties": {
+          "idMedicao": {
+            "type": "integer",
+            "title": "Idmedicao",
+            "description": "Identificador único da medição."
+          },
+          "pressaoSistolica": {
+            "type": "integer",
+            "title": "Pressaosistolica"
+          },
+          "pressaoDiastolica": {
+            "type": "integer",
+            "title": "Pressaodiastolica"
+          },
+          "frequenciaCardiaca": {
+            "type": "integer",
+            "title": "Frequenciacardiaca"
+          },
+          "nivelOxigenacao": {
+            "type": "number",
+            "title": "Niveloxigenacao"
+          },
+          "pesoCorporal": {
+            "type": "number",
+            "title": "Pesocorporal"
+          },
+          "faltaAr": {
+            "type": "boolean",
+            "title": "Faltaar"
+          },
+          "dorPeito": {
+            "type": "boolean",
+            "title": "Dorpeito"
+          },
+          "tontura": {
+            "type": "boolean",
+            "title": "Tontura"
+          },
+          "observacoes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Observacoes"
+          },
+          "dataMedicao": {
+            "type": "string",
+            "format": "date",
+            "title": "Datamedicao"
+          }
+        },
+        "type": "object",
+        "required": [
+          "idMedicao",
+          "pressaoSistolica",
+          "pressaoDiastolica",
+          "frequenciaCardiaca",
+          "nivelOxigenacao",
+          "pesoCorporal",
+          "faltaAr",
+          "dorPeito",
+          "tontura",
+          "observacoes",
+          "dataMedicao"
+        ],
+        "title": "MeasurementResponse",
+        "description": "Schema de resposta com os dados da medição cardíaca."
+      },
+      "RefreshTokenRequest": {
+        "properties": {
+          "refresh_token": {
+            "type": "string",
+            "title": "Refresh Token"
+          }
+        },
+        "type": "object",
+        "required": [
+          "refresh_token"
+        ],
+        "title": "RefreshTokenRequest"
+      },
+      "ReportHistoryItemResponse": {
+        "properties": {
+          "dataMedicao": {
+            "type": "string",
+            "format": "date",
+            "title": "Datamedicao"
+          },
+          "pressaoSistolica": {
+            "type": "integer",
+            "title": "Pressaosistolica"
+          },
+          "pressaoDiastolica": {
+            "type": "integer",
+            "title": "Pressaodiastolica"
+          },
+          "frequenciaCardiaca": {
+            "type": "integer",
+            "title": "Frequenciacardiaca"
+          },
+          "nivelOxigenacao": {
+            "type": "number",
+            "title": "Niveloxigenacao"
+          },
+          "pesoCorporal": {
+            "type": "number",
+            "title": "Pesocorporal"
+          },
+          "faltaAr": {
+            "type": "boolean",
+            "title": "Faltaar"
+          },
+          "dorPeito": {
+            "type": "boolean",
+            "title": "Dorpeito"
+          },
+          "tontura": {
+            "type": "boolean",
+            "title": "Tontura"
+          }
+        },
+        "type": "object",
+        "required": [
+          "dataMedicao",
+          "pressaoSistolica",
+          "pressaoDiastolica",
+          "frequenciaCardiaca",
+          "nivelOxigenacao",
+          "pesoCorporal",
+          "faltaAr",
+          "dorPeito",
+          "tontura"
+        ],
+        "title": "ReportHistoryItemResponse",
+        "description": "Schema com um ponto do histórico usado para gráficos."
+      },
+      "ReportPeriodResponse": {
+        "properties": {
+          "dataInicial": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Datainicial",
+            "description": "Data inicial usada no filtro."
+          },
+          "dataFinal": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Datafinal",
+            "description": "Data final usada no filtro."
+          }
+        },
+        "type": "object",
+        "title": "ReportPeriodResponse",
+        "description": "Schema com o período considerado no relatório."
+      },
+      "ReportSummaryResponse": {
+        "properties": {
+          "totalMedicoes": {
+            "type": "integer",
+            "title": "Totalmedicoes",
+            "description": "Total de medições analisadas."
+          },
+          "mediaPressaoSistolica": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mediapressaosistolica",
+            "description": "Média da pressão sistólica."
+          },
+          "mediaPressaoDiastolica": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mediapressaodiastolica",
+            "description": "Média da pressão diastólica."
+          },
+          "mediaFrequenciaCardiaca": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mediafrequenciacardiaca",
+            "description": "Média da frequência cardíaca."
+          },
+          "mediaNivelOxigenacao": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Medianiveloxigenacao",
+            "description": "Média do nível de oxigenação."
+          },
+          "mediaPesoCorporal": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mediapesocorporal",
+            "description": "Média do peso corporal."
+          }
+        },
+        "type": "object",
+        "required": [
+          "totalMedicoes"
+        ],
+        "title": "ReportSummaryResponse",
+        "description": "Schema com indicadores consolidados de saúde cardíaca."
+      },
+      "SexoEnum": {
+        "type": "string",
+        "enum": [
+          "M",
+          "F"
+        ],
+        "title": "SexoEnum",
+        "description": "Enum com os valores permitidos para o sexo do usuário."
+      },
+      "SymptomsSummaryResponse": {
+        "properties": {
+          "registrosFaltaAr": {
+            "type": "integer",
+            "title": "Registrosfaltaar",
+            "description": "Registros com falta de ar."
+          },
+          "registrosDorPeito": {
+            "type": "integer",
+            "title": "Registrosdorpeito",
+            "description": "Registros com dor no peito."
+          },
+          "registrosTontura": {
+            "type": "integer",
+            "title": "Registrostontura",
+            "description": "Registros com tontura."
+          }
+        },
+        "type": "object",
+        "required": [
+          "registrosFaltaAr",
+          "registrosDorPeito",
+          "registrosTontura"
+        ],
+        "title": "SymptomsSummaryResponse",
+        "description": "Schema com a quantidade de sintomas registrados."
+      },
+      "TokenResponse": {
+        "properties": {
+          "access_token": {
+            "type": "string",
+            "title": "Access Token"
+          },
+          "refresh_token": {
+            "type": "string",
+            "title": "Refresh Token"
+          },
+          "token_type": {
+            "type": "string",
+            "title": "Token Type",
+            "default": "bearer"
+          },
+          "expires_in": {
+            "type": "integer",
+            "title": "Expires In"
+          }
+        },
+        "type": "object",
+        "required": [
+          "access_token",
+          "refresh_token",
+          "expires_in"
+        ],
+        "title": "TokenResponse"
+      },
+      "UserRegistrationRequest": {
+        "properties": {
+          "nome": {
+            "type": "string",
+            "title": "Nome",
+            "description": "Primeiro nome do usuário."
+          },
+          "sobrenome": {
+            "type": "string",
+            "title": "Sobrenome",
+            "description": "Sobrenome do usuário."
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "title": "Email",
+            "description": "E-mail único do usuário."
+          },
+          "celular": {
+            "type": "string",
+            "title": "Celular",
+            "description": "Número de celular com código do país."
+          },
+          "senha": {
+            "type": "string",
+            "title": "Senha",
+            "description": "Senha do usuário."
+          },
+          "confirmarSenha": {
+            "type": "string",
+            "title": "Confirmarsenha",
+            "description": "Confirmação da senha informada."
+          },
+          "dataNascimento": {
+            "type": "string",
+            "format": "date",
+            "title": "Datanascimento",
+            "description": "Data de nascimento no formato AAAA-MM-DD."
+          },
+          "sexo": {
+            "$ref": "#/components/schemas/SexoEnum",
+            "description": "Sexo informado pelo usuário."
+          },
+          "paisResidencia": {
+            "type": "string",
+            "title": "Paisresidencia",
+            "description": "País de residência do usuário."
+          },
+          "naturalidadeUF": {
+            "type": "string",
+            "maxLength": 2,
+            "minLength": 2,
+            "title": "Naturalidadeuf",
+            "description": "Unidade federativa de naturalidade."
+          }
+        },
+        "type": "object",
+        "required": [
+          "nome",
+          "sobrenome",
+          "email",
+          "celular",
+          "senha",
+          "confirmarSenha",
+          "dataNascimento",
+          "sexo",
+          "paisResidencia",
+          "naturalidadeUF"
+        ],
+        "title": "UserRegistrationRequest",
+        "description": "Schema de entrada para cadastro de usuário."
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    },
+    "securitySchemes": {
+      "HTTPBearer": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    }
+  }
+}

@@ -6,9 +6,24 @@ Back-end de uma API REST para acompanhamento de saúde cardíaca. O sistema perm
 
 - Repositório Git: <https://github.com/Fernando-Gama/es2-saude-cardiaca-backend>
 - Swagger local: <http://localhost:8000/docs>
+- OpenAPI/Swagger JSON: [docs/swagger/swagger.json](docs/swagger/swagger.json)
 - Arquitetura: [docs/ARQUITETURA.md](docs/ARQUITETURA.md)
+- Roteiro de apresentação: [docs/ROTEIRO_APRESENTACAO.md](docs/ROTEIRO_APRESENTACAO.md)
 - Setup Linux: [docs/LINUX_ENVIRONMENT_SETUP.md](docs/LINUX_ENVIRONMENT_SETUP.md)
 - Setup Windows: [docs/WINDOWS_ENVIRONMENT_SETUP.md](docs/WINDOWS_ENVIRONMENT_SETUP.md)
+
+## Entregáveis
+
+- Link do repositório no Git:
+  <https://github.com/Fernando-Gama/es2-saude-cardiaca-backend>
+- Link da documentação da API:
+  <http://localhost:8000/docs>
+- Arquivo OpenAPI versionado:
+  [docs/swagger/swagger.json](docs/swagger/swagger.json)
+- Explicação da arquitetura e descrição da modularização:
+  [docs/ARQUITETURA.md](docs/ARQUITETURA.md)
+- Roteiro para demonstração do sistema, testes, estrutura e Swagger:
+  [docs/ROTEIRO_APRESENTACAO.md](docs/ROTEIRO_APRESENTACAO.md)
 
 ## Funcionalidades
 
@@ -51,7 +66,10 @@ Back-end de uma API REST para acompanhamento de saúde cardíaca. O sistema perm
 │   ├── pyproject.toml
 │   └── poetry.lock
 ├── docs/
-│   └── postman/
+│   ├── postman/
+│   ├── swagger/
+│   ├── ARQUITETURA.md
+│   └── ROTEIRO_APRESENTACAO.md
 ├── LICENSE
 └── README.md
 ```
@@ -93,6 +111,15 @@ A documentação Swagger ficará disponível em:
 ```text
 http://localhost:8000/docs
 ```
+
+A especificação OpenAPI exportada também está versionada em:
+
+```text
+docs/swagger/swagger.json
+```
+
+Esse arquivo pode ser aberto em ferramentas compatíveis com OpenAPI, como o
+Swagger Editor.
 
 ## Teste de serviços com Postman
 
