@@ -1,0 +1,774 @@
+{
+  "info": {
+    "_postman_id": "00000000-0000-4000-9000-000000000001",
+    "name": "API de Acompanhamento de Saúde Cardíaca - Roteiro de Apresentação",
+    "description": "Collection organizada para demonstrar o fluxo principal da API no Postman: cadastro, login, medição, listagem, atualização e relatório. Também inclui cenários de erro opcionais.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "01 - Fluxo principal da apresentação",
+      "description": "Execute esta pasta na ordem para demonstrar o sistema funcionando sem precisar digitar dados manualmente.",
+      "item": [
+        {
+          "name": "01 - Criar conta",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/users",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "users"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Fernando\",\n  \"sobrenome\": \"Gama\",\n  \"email\": \"{{email}}\",\n  \"celular\": \"{{celular}}\",\n  \"senha\": \"{{senha}}\",\n  \"confirmarSenha\": \"{{senha}}\",\n  \"dataNascimento\": \"2000-01-01\",\n  \"sexo\": \"M\",\n  \"paisResidencia\": \"Brasil\",\n  \"naturalidadeUF\": \"RJ\"\n}",
+              "options": {
+                "raw": {
+                  "headerFamily": "json",
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Cadastra um novo usuário. O e-mail é gerado automaticamente para evitar conflito de e-mail já cadastrado."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "const timestamp = Date.now();",
+                  "pm.environment.set('email', `usuario.teste.${timestamp}@email.com`);",
+                  "pm.environment.set('senha', 'Senha123@');",
+                  "pm.environment.set('celular', `219${String(timestamp).slice(-8)}`);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 201 - usuário criado', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "const response = pm.response.json();",
+                  "pm.test('Resposta possui idUsuario', function () {",
+                  "    pm.expect(response).to.have.property('idUsuario');",
+                  "});",
+                  "pm.environment.set('id_usuario', response.idUsuario);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ]
+        },
+        {
+          "name": "02 - Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "auth",
+                "login"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{email}}\",\n  \"senha\": \"{{senha}}\"\n}",
+              "options": {
+                "raw": {
+                  "headerFamily": "json",
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Autentica o usuário criado no passo anterior e salva o token JWT no ambiente."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200 - login realizado', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const response = pm.response.json();",
+                  "pm.test('Resposta possui access_token', function () {",
+                  "    pm.expect(response).to.have.property('access_token');",
+                  "});",
+                  "pm.environment.set('token', response.access_token);",
+                  "if (response.refresh_token) {",
+                  "    pm.environment.set('refresh_token', response.refresh_token);",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ]
+        },
+        {
+          "name": "03 - Criar medição",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/measurements",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "measurements"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"pressaoSistolica\": 120,\n  \"pressaoDiastolica\": 80,\n  \"frequenciaCardiaca\": 72,\n  \"nivelOxigenacao\": 98.5,\n  \"pesoCorporal\": 75.5,\n  \"faltaAr\": false,\n  \"dorPeito\": false,\n  \"tontura\": false,\n  \"dataMedicao\": \"2026-06-08\",\n  \"observacoes\": \"Medição criada durante demonstração no Postman\"\n}",
+              "options": {
+                "raw": {
+                  "headerFamily": "json",
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "Cadastra uma medição cardíaca realista usando o token obtido no login."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 201 - medição criada', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "const response = pm.response.json();",
+                  "pm.test('Resposta possui idMedicao', function () {",
+                  "    pm.expect(response).to.have.property('idMedicao');",
+                  "});",
+                  "pm.environment.set('id_medicao', response.idMedicao);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ]
+        },
+        {
+          "name": "04 - Listar medições",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/measurements",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "measurements"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "Lista as medições cadastradas para demonstrar consulta de histórico."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200 - lista retornada', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Resposta é uma lista', function () {",
+                  "    pm.expect(pm.response.json()).to.be.an('array');",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ]
+        },
+        {
+          "name": "05 - Buscar medição criada",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/measurements/{{id_medicao}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "measurements",
+                "{{id_medicao}}"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "Busca a medição criada usando o id salvo automaticamente no ambiente."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200 - medição encontrada', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const response = pm.response.json();",
+                  "pm.test('Medição retornada é a mesma criada', function () {",
+                  "    pm.expect(String(response.idMedicao)).to.eql(String(pm.environment.get('id_medicao')));",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ]
+        },
+        {
+          "name": "06 - Atualizar medição criada",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/measurements/{{id_medicao}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "measurements",
+                "{{id_medicao}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"pressaoSistolica\": 118,\n  \"pressaoDiastolica\": 78,\n  \"frequenciaCardiaca\": 70,\n  \"nivelOxigenacao\": 99.0,\n  \"pesoCorporal\": 75.3,\n  \"faltaAr\": false,\n  \"dorPeito\": false,\n  \"tontura\": false,\n  \"dataMedicao\": \"2026-06-08\",\n  \"observacoes\": \"Medição atualizada durante demonstração no Postman\"\n}",
+              "options": {
+                "raw": {
+                  "headerFamily": "json",
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "Atualiza a medição criada para demonstrar alteração de recurso existente."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200 - medição atualizada', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const response = pm.response.json();",
+                  "pm.test('Pressão sistólica atualizada', function () {",
+                  "    pm.expect(response.pressaoSistolica).to.eql(118);",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ]
+        },
+        {
+          "name": "07 - Relatório de saúde cardíaca",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/reports/heart-health?dataInicial={{dataInicial}}&dataFinal={{dataFinal}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "reports",
+                "heart-health"
+              ],
+              "query": [
+                {
+                  "key": "dataInicial",
+                  "value": "{{dataInicial}}",
+                  "description": "Data inicial do relatório no formato AAAA-MM-DD."
+                },
+                {
+                  "key": "dataFinal",
+                  "value": "{{dataFinal}}",
+                  "description": "Data final do relatório no formato AAAA-MM-DD."
+                }
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "Gera relatório com médias, sintomas, alertas e histórico no período definido no ambiente."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200 - relatório retornado', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const response = pm.response.json();",
+                  "pm.test('Relatório possui resumo, sintomas e histórico', function () {",
+                  "    pm.expect(response).to.have.property('resumo');",
+                  "    pm.expect(response).to.have.property('sintomas');",
+                  "    pm.expect(response).to.have.property('historico');",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ]
+        },
+        {
+          "name": "08 - Refresh token",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/auth/refresh",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "auth",
+                "refresh"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refresh_token\": \"{{refresh_token}}\"\n}",
+              "options": {
+                "raw": {
+                  "headerFamily": "json",
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Demonstra a renovação de token usando o refresh_token salvo no login."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200 - token renovado', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const response = pm.response.json();",
+                  "pm.environment.set('token', response.access_token);",
+                  "if (response.refresh_token) {",
+                  "    pm.environment.set('refresh_token', response.refresh_token);",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "02 - Casos de erro opcionais",
+      "description": "Use estes requests para demonstrar validações e segurança. Rode manualmente se quiser mostrar ao professor.",
+      "item": [
+        {
+          "name": "Erro - Login com senha incorreta",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "auth",
+                "login"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{email}}\",\n  \"senha\": \"senha-incorreta\"\n}",
+              "options": {
+                "raw": {
+                  "headerFamily": "json",
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Mostra que a API rejeita login com senha incorreta."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Credenciais inválidas devem ser rejeitadas', function () {",
+                  "    pm.expect([400, 401, 403]).to.include(pm.response.code);",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ]
+        },
+        {
+          "name": "Erro - Criar medição sem token",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/measurements",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "measurements"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"pressaoSistolica\": 120,\n  \"pressaoDiastolica\": 80,\n  \"frequenciaCardiaca\": 72,\n  \"nivelOxigenacao\": 98.5,\n  \"pesoCorporal\": 75.5,\n  \"faltaAr\": false,\n  \"dorPeito\": false,\n  \"tontura\": false,\n  \"dataMedicao\": \"2026-06-08\",\n  \"observacoes\": \"Medição criada durante demonstração no Postman\"\n}",
+              "options": {
+                "raw": {
+                  "headerFamily": "json",
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "Mostra que endpoints protegidos exigem token JWT."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Endpoint protegido deve exigir autenticação', function () {",
+                  "    pm.expect([401, 403]).to.include(pm.response.code);",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ]
+        },
+        {
+          "name": "Erro - Criar medição com dados inválidos",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/measurements",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "measurements"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"pressaoSistolica\": -120,\n  \"pressaoDiastolica\": 0,\n  \"frequenciaCardiaca\": -10,\n  \"nivelOxigenacao\": 200,\n  \"pesoCorporal\": -75,\n  \"faltaAr\": false,\n  \"dorPeito\": false,\n  \"tontura\": false,\n  \"dataMedicao\": \"2026-06-08\",\n  \"observacoes\": \"Dados inválidos para validar regras da API\"\n}",
+              "options": {
+                "raw": {
+                  "headerFamily": "json",
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "Mostra validação de dados fisiológicos inválidos."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Dados inválidos devem ser rejeitados', function () {",
+                  "    pm.expect([400, 422]).to.include(pm.response.code);",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ]
+        },
+        {
+          "name": "Erro - Relatório com período inválido",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/reports/heart-health?dataInicial=2026-12-31&dataFinal=2026-01-01",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "reports",
+                "heart-health"
+              ],
+              "query": [
+                {
+                  "key": "dataInicial",
+                  "value": "2026-12-31",
+                  "description": "Data inicial posterior à data final."
+                },
+                {
+                  "key": "dataFinal",
+                  "value": "2026-01-01",
+                  "description": "Data final anterior à data inicial."
+                }
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "Mostra validação do período usado no relatório."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Período inválido deve ser rejeitado', function () {",
+                  "    pm.expect([400, 422]).to.include(pm.response.code);",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://127.0.0.1:8000"
+    }
+  ]
+}
