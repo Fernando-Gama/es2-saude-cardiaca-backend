@@ -1,6 +1,11 @@
 from fastapi import FastAPI
 
+from acompanhamento_cardiaco.auth.auth_router import router as auth_router
 from acompanhamento_cardiaco.database import Base, engine
+from acompanhamento_cardiaco.measurements.measurement_router import (
+    router as measurements_router,
+)
+from acompanhamento_cardiaco.reports.report_router import router as reports_router
 from acompanhamento_cardiaco.users.user_router import router as users_router
 
 Base.metadata.create_all(bind=engine)
@@ -17,3 +22,6 @@ app = FastAPI(
 
 
 app.include_router(users_router, prefix="/v1")
+app.include_router(measurements_router, prefix="/v1")
+app.include_router(auth_router, prefix="/v1")
+app.include_router(reports_router, prefix="/v1")

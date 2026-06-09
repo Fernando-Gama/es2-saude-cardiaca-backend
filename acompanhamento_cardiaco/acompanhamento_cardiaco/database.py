@@ -1,4 +1,4 @@
-from collections.abc import Generator
+from collections.abc import AsyncGenerator
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import DeclarativeBase, Session, sessionmaker
@@ -23,7 +23,7 @@ class Base(DeclarativeBase):
     """Classe base para os modelos do banco de dados."""
 
 
-def get_db() -> Generator[Session, None, None]:
+async def get_db() -> AsyncGenerator[Session, None]:
     """Cria uma sessão com o banco de dados para ser usada nas rotas.
 
     Yields:
