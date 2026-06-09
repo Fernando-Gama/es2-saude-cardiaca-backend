@@ -32,6 +32,8 @@ Back-end de uma API REST para acompanhamento de saúde cardíaca. O sistema perm
 - Taskipy
 - Pytest
 - Ruff
+- Docker
+- Docker Compose
 
 ## Estrutura do repositório
 
@@ -52,6 +54,8 @@ Back-end de uma API REST para acompanhamento de saúde cardíaca. O sistema perm
 │   └── poetry.lock
 ├── docs/
 │   └── postman/
+├── Dockerfile
+├── docker-compose.yml
 ├── LICENSE
 └── README.md
 ```
@@ -93,6 +97,35 @@ A documentação Swagger ficará disponível em:
 ```text
 http://localhost:8000/docs
 ```
+
+## Como executar com Docker
+
+Na raiz do repositório, suba a API com Docker Compose:
+
+```bash
+docker compose up --build
+```
+
+A API ficará disponível em:
+
+```text
+http://localhost:8000
+```
+
+E o Swagger em:
+
+```text
+http://localhost:8000/docs
+```
+
+Para parar a API:
+
+```bash
+docker compose down
+```
+
+O banco SQLite é criado automaticamente dentro do container. Se o container for
+removido, os dados criados nessa execução também serão removidos.
 
 ## Teste de serviços com Postman
 

@@ -1,0 +1,13 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: acompanhamento-cardiaco-api
+    ports:
+      - "8000:8000"
+    environment:
+      SECRET_KEY: chave-de-desenvolvimento-acompanhamento-cardiaco
+      ALGORITHM: HS256
+      ACCESS_TOKEN_EXPIRE_MINUTES: "30"
+      REFRESH_TOKEN_EXPIRE_DAYS: "7"
